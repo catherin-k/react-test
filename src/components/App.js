@@ -17,6 +17,7 @@ import initialTodos from "./todos.json";
 class App extends Component {
   state = {
     todos: initialTodos,
+    inputValue: "",
   };
 
   deleteTodo = (todoId) => {
@@ -37,7 +38,8 @@ class App extends Component {
 
     return (
       <>
-        <h1>Events and states</h1>
+        <h1>Forms</h1>
+        <input type="text" value={this.state.inputValue} />
         {/* <Counter initialValue={10} /> */}
 
         {/* <Dropdown /> */}
