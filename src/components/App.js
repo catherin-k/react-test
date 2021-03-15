@@ -9,7 +9,12 @@ import Container from "./Container/Container";
 import Form from "./Form";
 import TodoEditor from "./todoEditor/TodoEditor";
 import Filter from "./Filter";
-
+import Modal from "./Modal";
+import Clock from "./Clock";
+import Tabs from "./Tabs";
+import initialTabs from "./initialTabs.json";
+import IconButton from "./IconButton";
+import { ReactComponent as AddIcon } from "../icons/add.svg";
 // const colorPickerOptions = [
 //   { label: "red", color: "#F44336" },
 //   { label: "green", color: "#4CAF50" },
@@ -23,7 +28,26 @@ class App extends Component {
   state = {
     todos: initialTodos,
     filter: "",
+    showModal: false,
   };
+
+  componentDidMount() {
+    console.log("App componentDidMount");
+
+    const todos = localStorage.getItem("todos");
+    const parsedTodos = JSON.parse(todos);
+
+    if (parsedTodos) {
+      this.setState({ todos: parsedTodos });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.todos !== prevState.todos) {
+      localStorage.setItem("todos", JSON.stringify(this.state.todos));
+    }
+  }
+
   addTodo = (text) => {
     console.log(text);
     const todo = {
@@ -35,6 +59,7 @@ class App extends Component {
       todos: [todo, ...todos],
     }));
   };
+
   deleteTodo = (todoId) => {
     this.setState((prevState) => ({
       todos: prevState.todos.filter((todo) => todo.id !== todoId),
@@ -83,8 +108,14 @@ class App extends Component {
     );
   };
 
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+  };
+
   render() {
-    const { todos } = this.state;
+    const { todos, showModal } = this.state;
 
     const totalTodoCount = todos.length;
 
@@ -95,26 +126,44 @@ class App extends Component {
 
     return (
       <Container>
-        <h1>Forms</h1>
+        <h1>Life-Cycles</h1>
+        <IconButton onClick={this.toggleModal} aria-label="Add note">
+          <AddIcon width="40" height="40" />
+        </IconButton>
+        {/* <button type="button" onClick={this.toggleModal}>
+          Open Modal
+        </button> */}
+        {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <h1>Hi, its Modal content</h1>
+            <p>
+              loremjlkasjlkasjdaklsjdklasjdasjdalsdj
+              asdlasdasdkasdaklsdaksldaksdjasldasdkjal jskl
+            </p>
+            <button type="button" onClick={this.toggleModal}>
+              Close
+            </button>
+          </Modal>
+        )}
         {/* <Form onSubmita={this.formSubmitHandler} /> */}
         {/* <Counter initialValue={10} /> */}
         {/* 
         <Dropdown /> */}
         {/* <ColorPicker options={colorPickerOptions} /> */}
-
         <TodoEditor onSubmita={this.addTodo} />
         <div>
           <p>Total amount Todoes: {totalTodoCount}</p>
           <p>Fulfil amount Todoes: {completedTodoCount}</p>
         </div>
-
         <Filter value={this.state.filter} onChangea={this.changeFilter} />
-
         <TodoList
           todos={this.getVisibleTodos()}
           onDeleteTodo={this.deleteTodo}
           onToggleCompleted={this.toggleCompleted}
         />
+
+        {/* <Clock /> */}
+        {/* <Tabs items={initialTabs} /> */}
       </Container>
     );
   }
