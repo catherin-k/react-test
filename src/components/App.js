@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import shortid from "shortid";
-// import Counter from "./counter";
-// import Dropdown from "./dropdown";
-// import ColorPicker from "./colorpicker";
+
 import TodoList from "./todoList";
 import initialTodos from "./todos.json";
 import Container from "./Container/Container";
@@ -10,19 +8,9 @@ import Form from "./Form";
 import TodoEditor from "./todoEditor/TodoEditor";
 import Filter from "./Filter";
 import Modal from "./Modal";
-import Clock from "./Clock";
-import Tabs from "./Tabs";
-import initialTabs from "./initialTabs.json";
+
 import IconButton from "./IconButton";
 import { ReactComponent as AddIcon } from "../icons/add.svg";
-// const colorPickerOptions = [
-//   { label: "red", color: "#F44336" },
-//   { label: "green", color: "#4CAF50" },
-//   { label: "blue", color: "#2196F3" },
-//   { label: "grey", color: "#607D8B" },
-//   { label: "pink", color: "#E91E63" },
-//   { label: "indigo", color: "#3F51B5" },
-// ];
 
 class App extends Component {
   state = {
@@ -126,7 +114,7 @@ class App extends Component {
 
     return (
       <Container>
-        <h1>Life-Cycles</h1>
+        <h1>Rest-API</h1>
         <IconButton onClick={this.toggleModal} aria-label="Add note">
           <AddIcon width="40" height="40" />
         </IconButton>
@@ -146,10 +134,7 @@ class App extends Component {
           </Modal>
         )}
         {/* <Form onSubmita={this.formSubmitHandler} /> */}
-        {/* <Counter initialValue={10} /> */}
-        {/* 
-        <Dropdown /> */}
-        {/* <ColorPicker options={colorPickerOptions} /> */}
+
         <TodoEditor onSubmita={this.addTodo} />
         <div>
           <p>Total amount Todoes: {totalTodoCount}</p>
@@ -161,9 +146,6 @@ class App extends Component {
           onDeleteTodo={this.deleteTodo}
           onToggleCompleted={this.toggleCompleted}
         />
-
-        {/* <Clock /> */}
-        {/* <Tabs items={initialTabs} /> */}
       </Container>
     );
   }
