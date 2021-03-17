@@ -1,20 +1,31 @@
 import React, { Component } from "react";
-import shortid from "shortid";
-
+// import shortid from "shortid";
+// import axios from "axios";
 import TodoList from "./todoList";
-import initialTodos from "./todos.json";
+// import initialTodos from "./todos.json";
 import Container from "./Container/Container";
 import Form from "./Form";
 import TodoEditor from "./todoEditor/TodoEditor";
 import Filter from "./Filter";
 import Modal from "./Modal";
+import todosApi from "../services/todos-api";
 
 import IconButton from "./IconButton";
 import { ReactComponent as AddIcon } from "../icons/add.svg";
 
+// class App extends Component {
+//   state = {
+//     //
+//   };
+
+//   render() {
+//     return <div>hi</div>;
+//   }
+// }
+
 class App extends Component {
   state = {
-    todos: initialTodos,
+    todos: [],
     filter: "",
     showModal: false,
   };
@@ -22,12 +33,17 @@ class App extends Component {
   componentDidMount() {
     console.log("App componentDidMount");
 
-    const todos = localStorage.getItem("todos");
-    const parsedTodos = JSON.parse(todos);
+    // const todos = localStorage.getItem("todos");
+    // const parsedTodos = JSON.parse(todos);
 
-    if (parsedTodos) {
-      this.setState({ todos: parsedTodos });
-    }
+    // if (parsedTodos) {
+    //   this.setState({ todos: parsedTodos });
+    // }
+    todosApi
+      .fetchTodos()
+      .then((todos) => this.setState({ todos }))
+
+      .catch((error) => console.log(error));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -38,23 +54,40 @@ class App extends Component {
 
   addTodo = (text) => {
     console.log(text);
-    const todo = {
-      id: shortid.generate(),
+    const todoData = {
       text,
       completed: false,
     };
-    this.setState(({ todos }) => ({
-      todos: [todo, ...todos],
-    }));
+
+    todosApi.addTodo(todoData).then((todo) => {
+      this.setState(({ todos }) => ({
+        todos: [todo, ...todos],
+      }));
+    });
   };
 
   deleteTodo = (todoId) => {
-    this.setState((prevState) => ({
-      todos: prevState.todos.filter((todo) => todo.id !== todoId),
-    }));
+    todosApi.deleteTodo(todoId).then(() => {
+      this.setState((prevState) => ({
+        todos: prevState.todos.filter((todo) => todo.id !== todoId),
+      }));
+    });
   };
+
   toggleCompleted = (todoId) => {
     console.log(todoId);
+    const todo = this.state.todos.find(({ id }) => id === todoId);
+    const { completed } = todo;
+
+    todosApi
+      .updateTodo(todoId, { completed: !completed })
+      .then((updatedTodo) => {
+        this.setState(({ todos }) => ({
+          todos: todos.map((todo) =>
+            todo.id === updatedTodo.id ? updatedTodo : todo
+          ),
+        }));
+      });
 
     // this.setState((prevState) => ({
     //   todos: prevState.todos.map((todo) => {
@@ -69,11 +102,11 @@ class App extends Component {
     //   }),
     // }));
     // деструктуризировали prevState в {todos}
-    this.setState(({ todos }) => ({
-      todos: todos.map((todo) =>
-        todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-      ),
-    }));
+    // this.setState(({ todos }) => ({
+    //   todos: todos.map((todo) =>
+    //     todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+    //   ),
+    // }));
   };
 
   handleNameChange = (event) => {
